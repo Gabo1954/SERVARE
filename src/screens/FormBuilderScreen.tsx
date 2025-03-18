@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { globalStyles } from "../styles/globalStyles";
-import Slider from "@react-native-community/slider"; // ✅ Corrección de importación
+import Slider from "@react-native-community/slider"; 
 
 // Definir la interfaz de los campos
 interface FormField {
@@ -40,8 +40,13 @@ const FormBuilderScreen = ({ navigation }: any) => {
   };
 
   const addField = () => {
-    if (!newFieldLabel) {
+    if (!newFieldLabel.trim()) {
       Alert.alert("Error", "El campo debe tener un nombre");
+      return;
+    }
+
+    if ((newFieldType === "select" || newFieldType === "radio") && !options.trim()) {
+      Alert.alert("Error", "Debe ingresar opciones separadas por comas");
       return;
     }
 
@@ -57,8 +62,12 @@ const FormBuilderScreen = ({ navigation }: any) => {
     setOptions("");
   };
 
+  const removeField = (index: number) => {
+    setFields(fields.filter((_, i) => i !== index));
+  };
+
   const saveForm = async () => {
-    if (!formTitle || fields.length === 0) {
+    if (!formTitle.trim() || fields.length === 0) {
       Alert.alert("Error", "Debe ingresar un título y al menos un campo");
       return;
     }
@@ -76,8 +85,11 @@ const FormBuilderScreen = ({ navigation }: any) => {
     setSavedForms(updatedForms);
     Alert.alert("Formulario Guardado", "Tu formulario ha sido guardado con éxito");
 
-    // ✅ Redirección corregida
-    navigation.navigate("DynamicForm", { formId });
+    if (navigation && navigation.navigate) {
+      navigation.navigate("DynamicForm", { formId });
+    } else {
+      Alert.alert("Error", "No se puede navegar a la vista de formulario");
+    }
   };
 
   return (
@@ -110,7 +122,7 @@ const FormBuilderScreen = ({ navigation }: any) => {
             onPress={() => setNewFieldType(item)} 
             style={[styles.fieldTypeButton, newFieldType === item && styles.selectedFieldType]}
           >
-            <Text style={styles.fieldTypeText}>{item}</Text>
+            <Text style={styles.fieldText}>{item}</Text>
           </TouchableOpacity>
         )}
       />
@@ -126,21 +138,6 @@ const FormBuilderScreen = ({ navigation }: any) => {
         />
       )}
 
-      {/* Campo de Slider */}
-      {newFieldType === "slider" && (
-        <View>
-          <Text style={styles.label}>Selecciona un rango</Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={50}
-            minimumTrackTintColor="#1E90FF"
-            maximumTrackTintColor="#D3D3D3"
-          />
-        </View>
-      )}
-
       <TouchableOpacity style={globalStyles.button} onPress={addField}>
         <Text style={globalStyles.buttonText}>Agregar Campo</Text>
       </TouchableOpacity>
@@ -149,9 +146,12 @@ const FormBuilderScreen = ({ navigation }: any) => {
       <FlatList
         data={fields}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={styles.fieldItem}>
             <Text style={styles.fieldText}>{item.label} ({item.type})</Text>
+            <TouchableOpacity onPress={() => removeField(index)}>
+              <Text style={{ color: "red" }}>Eliminar</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -181,9 +181,6 @@ const styles = StyleSheet.create({
   selectedFieldType: {
     backgroundColor: "#4D92AD",
   },
-  fieldTypeText: {
-    color: "white",
-  },
   fieldItem: {
     padding: 10,
     borderBottomWidth: 1,
@@ -191,11 +188,6 @@ const styles = StyleSheet.create({
   },
   fieldText: {
     color: "#fff",
-  },
-  label: {
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 5,
   },
 });
 

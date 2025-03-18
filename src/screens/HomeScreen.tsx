@@ -45,7 +45,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         data={quickActions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(item.screen as any)}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('FormBuilderScreen')}>
             <Text style={styles.buttonText}>{item.title}</Text>
           </TouchableOpacity>
         )}
