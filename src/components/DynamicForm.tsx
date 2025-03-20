@@ -4,11 +4,29 @@ import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 const DynamicForm = ({ route }: any) => {
   const { formId } = route.params;
   const [form, setForm] = useState<{ title: string; fields: any[] } | null>(null);
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
+
+  // Esquema de validación con Yup
+  const schema = Yup.object().shape({
+    Nombre_Completo: Yup.string().required("El nombre es obligatorio").min(3, "Debe tener al menos 3 caracteres"),
+    email: Yup.string().email("Debe ser un correo válido").required("El correo es obligatorio"),
+    edad: Yup.number().typeError("Debe ser un número").positive("Debe ser un número positivo"),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   useEffect(() => {
     const loadForm = async () => {
@@ -20,13 +38,9 @@ const DynamicForm = ({ route }: any) => {
     loadForm();
   }, [formId]);
 
-  const handleInputChange = (label: string, value: any) => {
-    setFormData({ ...formData, [label]: value });
-  };
-
-  const handleSubmit = () => {
-    console.log("Formulario Enviado:", formData);
-    Alert.alert("Datos enviados", JSON.stringify(formData, null, 2));
+  const onSubmit = (data: any) => {
+    console.log("Formulario Enviado:", data);
+    Alert.alert("Datos enviados", JSON.stringify(data, null, 2));
   };
 
   if (!form) {
@@ -37,161 +51,50 @@ const DynamicForm = ({ route }: any) => {
     <View style={styles.container}>
       <Text style={styles.title}>{form.title}</Text>
 
-      {form.fields.map((field, index) => (
-        <View key={index} style={styles.fieldContainer}>
-          <Text style={styles.label}>{field.label}</Text>
+      {form.fields.map((field, index) => {
+        const fieldKey = field.label.replace(/\s+/g, "_") as keyof typeof errors; // Corrección aquí
 
-          {/* Campos de entrada de texto, número, email y fecha */}
-          {["text", "email", "number", "date"].includes(field.type) && (
-            <TextInput
-              style={styles.input}
-              keyboardType={field.type === "number" ? "numeric" : "default"}
-              onChangeText={(text) => handleInputChange(field.label, text)}
-              placeholder={`Ingrese ${field.label}`}
-            />
-          )}
+        return (
+          <View key={index} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
 
-          {/* Selector (Dropdown) */}
-          {field.type === "select" && (
-            <Picker
-              selectedValue={formData[field.label] || ""}
-              onValueChange={(itemValue) => handleInputChange(field.label, itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Seleccione una opción" value="" />
-              {field.options?.map((option: string, idx: number) => (
-                <Picker.Item key={idx} label={option} value={option} />
-              ))}
-            </Picker>
-          )}
+            {["text", "email", "number"].includes(field.type) && (
+              <Controller
+                control={control}
+                name={field.label.replace(/\s+/g, "_")}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <TextInput
+                      style={styles.input}
+                      keyboardType={field.type === "number" ? "numeric" : "default"}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      placeholder={`Ingrese ${field.label}`}
+                    />
+                    {errors[fieldKey]?.message && (
+                      <Text style={styles.error}>{errors[fieldKey]?.message}</Text>
+                    )}
+                  </>
+                )}
+              />
+            )}
+          </View>
+        );
+      })}
 
-          {/* Checkbox (Switch) */}
-          {field.type === "checkbox" && (
-            <Switch
-              value={formData[field.label] === true}
-              onValueChange={(value) => handleInputChange(field.label, value)}
-            />
-          )}
-
-          {/* Radio Buttons */}
-          {field.type === "radio" &&
-            field.options?.map((option: string, idx: number) => (
-              <TouchableOpacity key={idx} onPress={() => handleInputChange(field.label, option)}>
-                <Text
-                  style={[
-                    styles.radioButton,
-                    formData[field.label] === option && styles.radioButtonSelected,
-                  ]}
-                >
-                  {option}
-                </Text>
-              </TouchableOpacity>
-            ))}
-
-          {/* Textarea (Texto largo) */}
-          {field.type === "textarea" && (
-            <TextInput
-              style={styles.textarea}
-              multiline
-              onChangeText={(text) => handleInputChange(field.label, text)}
-            />
-          )}
-
-          {/* Selector de Imagen */}
-          {field.type === "image" && (
-            <TouchableOpacity
-              onPress={async () => {
-                const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (!permission.granted) {
-                  Alert.alert("Permiso denegado", "Se requiere acceso a la galería para subir imágenes.");
-                  return;
-                }
-                const result = await ImagePicker.launchImageLibraryAsync();
-                if (!result.canceled && result.assets.length > 0) {
-                  handleInputChange(field.label, result.assets[0].uri);
-                }
-              }}
-            >
-              <Text style={styles.link}>Seleccionar Imagen</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Obtener ubicación GPS */}
-          {field.type === "location" && (
-            <TouchableOpacity
-              onPress={async () => {
-                const permission = await Location.requestForegroundPermissionsAsync();
-                if (!permission.granted) {
-                  Alert.alert("Permiso denegado", "Se requiere acceso a la ubicación.");
-                  return;
-                }
-                const location = await Location.getCurrentPositionAsync();
-                handleInputChange(
-                  field.label,
-                  `Lat: ${location.coords.latitude}, Lng: ${location.coords.longitude}`
-                );
-              }}
-            >
-              <Text style={styles.link}>Obtener Ubicación</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      ))}
-
-      <Button title="Enviar" onPress={handleSubmit} />
+      <Button title="Enviar" onPress={handleSubmit(onSubmit)} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  fieldContainer: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-  },
-  textarea: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    height: 80,
-  },
-  radioButton: {
-    padding: 5,
-    backgroundColor: "#ccc",
-    color: "white",
-    borderRadius: 5,
-    textAlign: "center",
-    marginVertical: 2,
-  },
-  radioButtonSelected: {
-    backgroundColor: "#4D92AD",
-  },
-  link: {
-    color: "blue",
-    textDecorationLine: "underline",
-  },
+  container: { padding: 20 },
+  title: { fontSize: 20, fontWeight: "bold", marginBottom: 20 },
+  fieldContainer: { marginBottom: 15 },
+  label: { fontSize: 16, marginBottom: 5 },
+  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 5 },
+  error: { color: "red", fontSize: 12, marginTop: 2 },
 });
 
 export default DynamicForm;
