@@ -40,11 +40,19 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@types/react": "^18.3.18",
+    "@types/react": "~18.3.12",
     "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-navigation": "^3.0.8",
     "expo": "~52.0.38",
     "typescript": "^5.7.3"
   },
+
+  "expo": {
+  "doctor": {
+    "reactNativeDirectoryCheck": {
+      "listUnknownPackages": false
+    }
+  }
+},
   "private": true
 }
