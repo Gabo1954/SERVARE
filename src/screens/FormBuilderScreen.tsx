@@ -1,23 +1,23 @@
+// FormBuilderScreen.tsx
 import React, { useState, useEffect } from "react";
-import { 
-  View, Text, TextInput, Alert, FlatList, 
-  TouchableOpacity, StyleSheet 
-} from "react-native";
+import { View, Text, TextInput, Alert, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from '@react-native-picker/picker';
 import { globalStyles } from "../styles/globalStyles";
-import Slider from "@react-native-community/slider"; 
 
-// Definir la interfaz de los campos
-interface FormField {
+export interface FormField {
   label: string;
   type: string;
   options?: string[];
+  // Propiedad para condiciones (IF anidado). Cada clave es el valor de activación y el valor es un array de campos adicionales.
+  condiciones?: Record<string, FormField[]>;
 }
 
 const fieldTypes: string[] = [
-  "text", "email", "number", "date", 
-  "select", "checkbox", "radio", 
-  "textarea", "image", "location", "slider"
+  "text", "multiline", "number", "decimal", "nombre", "fecha", "fecha-hora",
+  "dropdown", "decision", "multiple", "opción", "checkbox",
+  "imagen", "audio", "video", "descripción", "sección",
+  "slider", "puntuación", "id_unico", "fórmula", "georreferenciación"
 ];
 
 const FormBuilderScreen = ({ navigation }: any) => {
@@ -26,14 +26,14 @@ const FormBuilderScreen = ({ navigation }: any) => {
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
   const [options, setOptions] = useState("");
-  const [savedForms, setSavedForms] = useState<{ id: string; title: string }[]>([]);
+  const [savedForms, setSavedForms] = useState<any[]>([]);
 
   useEffect(() => {
     loadForms();
   }, []);
 
   const loadForms = async () => {
-    const storedForms = await AsyncStorage.getItem("savedForms");
+    const storedForms = await AsyncStorage.getItem("formularios");
     if (storedForms) {
       setSavedForms(JSON.parse(storedForms));
     }
@@ -44,18 +44,16 @@ const FormBuilderScreen = ({ navigation }: any) => {
       Alert.alert("Error", "El campo debe tener un nombre");
       return;
     }
-
-    if ((newFieldType === "select" || newFieldType === "radio") && !options.trim()) {
+    // Si el tipo es dropdown o multiple se requiere ingresar opciones
+    if ((newFieldType === "dropdown" || newFieldType === "multiple") && !options.trim()) {
       Alert.alert("Error", "Debe ingresar opciones separadas por comas");
       return;
     }
-
     const newField: FormField = { label: newFieldLabel, type: newFieldType };
-
-    if (newFieldType === "select" || newFieldType === "radio") {
+    if (newFieldType === "dropdown" || newFieldType === "multiple") {
       newField.options = options.split(",").map((o) => o.trim());
     }
-
+    // Aquí se podría implementar una ventana modal para configurar condiciones y reglas (IF anidado)
     setFields([...fields, newField]);
     setNewFieldLabel("");
     setNewFieldType("text");
@@ -71,18 +69,24 @@ const FormBuilderScreen = ({ navigation }: any) => {
       Alert.alert("Error", "Debe ingresar un título y al menos un campo");
       return;
     }
-
     const formId = Date.now().toString();
-    const newForm = { id: formId, title: formTitle, fields };
+    // Se genera el objeto de formulario según el modelo de negocio
+    const newForm = {
+      id_formulario: formId,
+      cod_formulario: `CCP_${formId}`,
+      nombre: formTitle,
+      descripción: "",
+      creado_por: "", // Aquí se asignaría el id del usuario autenticado
+      fecha_creación: new Date().toISOString(),
+      estado: "Borrador",
+      // La estructura del formulario se guarda en configuración_json
+      configuración_json: JSON.stringify({ campos: fields })
+    };
 
-    const storedForms = await AsyncStorage.getItem("savedForms");
+    const storedForms = await AsyncStorage.getItem("formularios");
     const existingForms = storedForms ? JSON.parse(storedForms) : [];
-
-    const updatedForms = [...existingForms, { id: formId, title: formTitle }];
-    await AsyncStorage.setItem("savedForms", JSON.stringify(updatedForms));
-    await AsyncStorage.setItem(`form_${formId}`, JSON.stringify(newForm));
-
-    setSavedForms(updatedForms);
+    const updatedForms = [...existingForms, newForm];
+    await AsyncStorage.setItem("formularios", JSON.stringify(updatedForms));
     Alert.alert("Formulario Guardado", "Tu formulario ha sido guardado con éxito");
 
     if (navigation && navigation.navigate) {
@@ -104,31 +108,30 @@ const FormBuilderScreen = ({ navigation }: any) => {
         placeholderTextColor="#ccc"
       />
 
+      <Text style={styles.label}>Nombre del campo</Text>
       <TextInput
-        placeholder="Nombre del campo"
+        placeholder="Ingrese el nombre del campo"
         style={styles.input}
         value={newFieldLabel}
         onChangeText={setNewFieldLabel}
         placeholderTextColor="#ccc"
       />
 
-      {/* Selección de Tipo de Campo */}
-      <FlatList
-        data={fieldTypes}
-        horizontal
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-            onPress={() => setNewFieldType(item)} 
-            style={[styles.fieldTypeButton, newFieldType === item && styles.selectedFieldType]}
-          >
-            <Text style={styles.fieldText}>{item}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      <Text style={styles.label}>Tipo de Campo</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={newFieldType}
+          onValueChange={(itemValue) => setNewFieldType(itemValue)}
+          style={styles.picker}
+          dropdownIconColor="#007bff"
+        >
+          {fieldTypes.map((tipo) => (
+            <Picker.Item key={tipo} label={tipo} value={tipo} />
+          ))}
+        </Picker>
+      </View>
 
-      {/* Campo de opciones para Select y Radio */}
-      {(newFieldType === "select" || newFieldType === "radio") && (
+      {(newFieldType === "dropdown" || newFieldType === "multiple") && (
         <TextInput
           placeholder="Opciones (separadas por comas)"
           style={styles.input}
@@ -138,11 +141,15 @@ const FormBuilderScreen = ({ navigation }: any) => {
         />
       )}
 
+      {/* Botón para agregar condiciones IF anidado */}
+      <TouchableOpacity style={styles.conditionalButton} onPress={() => Alert.alert("Funcionalidad pendiente", "Configurar condiciones y reglas IF anidado.")}>
+        <Text style={styles.conditionalButtonText}>Agregar Condición (IF anidado)</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={globalStyles.button} onPress={addField}>
         <Text style={globalStyles.buttonText}>Agregar Campo</Text>
       </TouchableOpacity>
 
-      {/* Lista de Campos Agregados */}
       <FlatList
         data={fields}
         keyExtractor={(item, index) => index.toString()}
@@ -172,14 +179,31 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 10,
   },
-  fieldTypeButton: {
-    padding: 10,
-    backgroundColor: "#ccc",
-    margin: 5,
-    borderRadius: 5,
+  label: {
+    color: "#fff",
+    marginBottom: 5,
+    fontWeight: "bold"
   },
-  selectedFieldType: {
+  pickerContainer: {
+    backgroundColor: "#3B4A5A",
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  picker: {
+    color: "#fff",
+    width: "100%",
+    height: 50,
+  },
+  conditionalButton: {
     backgroundColor: "#4D92AD",
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  conditionalButtonText: {
+    color: "#fff",
+    fontWeight: "bold"
   },
   fieldItem: {
     padding: 10,
