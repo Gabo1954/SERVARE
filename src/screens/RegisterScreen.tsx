@@ -1,3 +1,4 @@
+// RegisterScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,6 +8,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
+
 interface Props {
   navigation: RegisterScreenNavigationProp;
 }
@@ -15,7 +17,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('usuario'); // Valor por defecto
+  const [role, setRole] = useState('usuario');
 
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
@@ -26,10 +28,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
-
     try {
       const user = { email, password, role };
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.setItem('usuario', JSON.stringify(user));
       Alert.alert('Registro exitoso', `Usuario registrado como ${role}`);
       navigation.navigate('Login');
     } catch (error) {
@@ -39,14 +40,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Logo */}
       <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-
       <Text style={styles.welcomeText}>Crear cuenta</Text>
-
-      {/* Campo de correo */}
       <View style={styles.inputContainer}>
-        <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
+        <MaterialIcons name="email" size={24} color="black" style={styles.icon} />
         <TextInput
           placeholder="Correo"
           placeholderTextColor="#ccc"
@@ -56,10 +53,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setEmail}
         />
       </View>
-
-      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
+        <Ionicons name="lock-closed" size={24} color="black" style={styles.icon} />
         <TextInput
           placeholder="Contraseña"
           placeholderTextColor="#ccc"
@@ -69,10 +64,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setPassword}
         />
       </View>
-
-      {/* Confirmar contraseña */}
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
+        <Ionicons name="lock-closed-outline" size={24} color="black" style={styles.icon} />
         <TextInput
           placeholder="Confirmar Contraseña"
           placeholderTextColor="#ccc"
@@ -82,31 +75,23 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setConfirmPassword}
         />
       </View>
-
-      {/* Selector de rol */}
       <View style={styles.pickerContainer}>
-  <Picker
-    selectedValue={role}
-    onValueChange={(itemValue) => setRole(itemValue)}
-    style={styles.picker}
-    dropdownIconColor="white"
-    mode="dropdown"
-  >
-    <Picker.Item label="Usuario Básico" value="usuario" color="white" />
-    <Picker.Item label="Líder de Equipo" value="lider" color="white" />
-    <Picker.Item label="Administrador" value="admin" color="white" />
-  </Picker>
-</View>
-
-      {/* Botón de Registro */}
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue) => setRole(itemValue)}
+          style={styles.picker}
+          dropdownIconColor="white"
+          mode="dropdown"
+        >
+          <Picker.Item label="Administrador" value="admin" />
+          <Picker.Item label="Líder de Equipo" value="lider" />
+          <Picker.Item label="Usuario Básico" value="usuario" />
+        </Picker>
+      </View>
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Registrarse</Text>
       </TouchableOpacity>
-
-      {/* Texto "¿Ya tienes cuenta?" */}
-      <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
-
-      {/* Botón para ir al login */}
+      <Text style={styles.loginPrompt}>¿Ya tienes cuenta?</Text>
       <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
@@ -151,18 +136,17 @@ const styles = StyleSheet.create({
     height: 50,
   },
   pickerContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Fondo oscuro semi-transparente
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 25,
     width: "90%",
     marginBottom: 15,
     paddingHorizontal: 10,
     justifyContent: "center",
-    overflow: "hidden", // Evita desbordes
   },
   picker: {
     height: 50,
-    color: "white", // Forzar el texto en blanco
-    backgroundColor: "transparent", // Evita fondo blanco por defecto
+    color: "black",
+    backgroundColor: "transparent",
   },
   registerButton: {
     backgroundColor: "#5BBFBA",
@@ -197,3 +181,4 @@ const styles = StyleSheet.create({
 });
 
 export default RegisterScreen;
+

@@ -13,6 +13,7 @@ import AdminDashboard from "../screens/AdminDashboard";
 import LeaderDashboard from "../screens/LeaderDashboard";
 import UserDashboard from "../screens/UserDashboard";
 import FormBuilderScreen from "../screens/FormBuilderScreen"; 
+import ReportsScreen from "../screens/ReportsScreen"; 
 import DynamicForm from "../components/DynamicForm"; // 🔹 Importamos correctamente DynamicForm
 
 // Definimos las rutas de navegación
@@ -25,6 +26,7 @@ export type RootStackParamList = {
   LeaderDashboard: undefined;
   UserDashboard: undefined;
   FormBuilderScreen: undefined;
+  ReportsScreen: undefined;
   DynamicForm: { formId: string }; // 🔹 DynamicForm ahora recibe formId como parámetro
 };
 
@@ -77,6 +79,10 @@ const AppNavigator = () => {
         {/* Pantallas de formularios */}
         <Stack.Screen name="FormBuilderScreen" component={FormBuilderScreen} options={{ title: "Crear Formulario" }} />
         <Stack.Screen name="DynamicForm" component={DynamicForm} options={{ title: "Formulario Dinámico" }} />
+
+        {/* Pantallas de Fichas */}
+        <Stack.Screen name="ReportsScreen" component={ReportsScreen} options={{ title: "Fichas" }} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,3 +1,4 @@
+// LoginScreen.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,25 +17,33 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!email.trim() || !password.trim()) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
     }
-
     try {
-      const storedUser = await AsyncStorage.getItem("user");
+      const storedUser = await AsyncStorage.getItem("usuario");
       if (storedUser) {
-        const { email: storedEmail, password: storedPassword, role } = JSON.parse(storedUser);
+        let userData;
+        try {
+          userData = JSON.parse(storedUser);
+        } catch (error) {
+          Alert.alert("Error", "Error al leer los datos del usuario");
+          return;
+        }
+
+        const { email: storedEmail, password: storedPassword, role } = userData;
         if (email === storedEmail && password === storedPassword) {
           Alert.alert("Bienvenido", `Has iniciado sesión como ${role}`);
-
-          // Redirigir según el rol del usuario
-          if (role === "admin") {
-            navigation.navigate("AdminDashboard");
-          } else if (role === "lider") {
-            navigation.navigate("LeaderDashboard");
-          } else {
-            navigation.navigate("UserDashboard");
+          switch (role) {
+            case "admin":
+              navigation.navigate("AdminDashboard");
+              break;
+            case "lider":
+              navigation.navigate("LeaderDashboard");
+              break;
+            default:
+              navigation.navigate("UserDashboard");
           }
         } else {
           Alert.alert("Error", "Correo o contraseña incorrectos");
@@ -49,12 +58,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Espacio para la imagen */}
-      <Image source={require("../assets/images/logo.png")} style={styles.logo} />
-
+      <Image source={require("../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
       <Text style={styles.welcomeText}>Bienvenido</Text>
-
-      {/* Campo de correo */}
       <View style={styles.inputContainer}>
         <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
         <TextInput
@@ -62,12 +67,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           placeholderTextColor="#ccc"
           style={styles.input}
           keyboardType="email-address"
+          autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
         />
       </View>
-
-      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
         <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
         <TextInput
@@ -75,21 +79,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           placeholderTextColor="#ccc"
           style={styles.input}
           secureTextEntry
+          autoCapitalize="none"
           value={password}
           onChangeText={setPassword}
         />
       </View>
-
-      {/* Botón de Login */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.7}>
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
-
-      {/* Texto "¿No tiene una cuenta?" */}
       <Text style={styles.registerPrompt}>¿No tiene una cuenta?</Text>
-
-      {/* Botón para crear cuenta */}
-      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")}>
+      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")} activeOpacity={0.7}>
         <Text style={styles.registerButtonText}>Crear cuenta</Text>
       </TouchableOpacity>
     </View>
@@ -105,10 +104,9 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   logo: {
-    width: 200, 
-    height: 200, 
+    width: 200,
+    height: 200,
     marginBottom: 40,
-    resizeMode: "contain",
   },
   welcomeText: {
     fontSize: 24,
@@ -165,3 +163,5 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+
+
