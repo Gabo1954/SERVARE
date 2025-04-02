@@ -5,14 +5,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, ActivityIndicator } from "react-native";
 
 // Importamos las pantallas
-import HomeScreen from "../screens/HomeScreen";
-import FormScreen from "../screens/FormScreen";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import AdminDashboard from "../screens/AdminDashboard";
-import LeaderDashboard from "../screens/LeaderDashboard";
-import UserDashboard from "../screens/UserDashboard";
-import FormBuilderScreen from "../screens/FormBuilderScreen"; 
+import HomeScreen from "../screens/Users/HomeScreen";
+import FormScreen from "../screens/Forms/FormScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
+import AdminDashboard from "../screens/Users/AdminDashboard";
+import LeaderDashboard from "../screens/Users/LeaderDashboard";
+import UserDashboard from "../screens/Users/UserDashboard";
+import FormBuilderScreen from "../screens/Forms/FormBuilderScreen"; 
 import DynamicForm from "../components/DynamicForm"; // 🔹 Importamos correctamente DynamicForm
 
 // Definimos las rutas de navegación

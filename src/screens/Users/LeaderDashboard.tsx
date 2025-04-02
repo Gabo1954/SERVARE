@@ -2,9 +2,9 @@ import React from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../navigation/AppNavigator";
+import { RootStackParamList } from "../../navigation/AppNavigator";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { globalStyles } from "../styles/globalStyles"; // Importar estilos globales
+import { globalStyles } from "../../styles/globalStyles"; // Importar estilos globales
 
 type LeaderScreenNavigationProp = StackNavigationProp<RootStackParamList, "LeaderDashboard">;
 interface Props {
