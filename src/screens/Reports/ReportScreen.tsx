@@ -6,7 +6,7 @@ import { generateExcelReport } from '../../services/reportService';
 import { RootStackParamList } from '../../navigation/AppNavigator';
 
 type Props = {
-  route: RouteProp<RootStackParamList, 'Report'>;
+  route: RouteProp<RootStackParamList, 'Reports'>;
 };
 
 const ReportScreen = ({ route }: Props) => {

@@ -8,12 +8,13 @@ import { View, ActivityIndicator } from "react-native";
 import HomeScreen from "../screens/Users/HomeScreen";
 import FormScreen from "../screens/Forms/FormScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
+import RestoreScreen from "../screens/auth/RestoreScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
 import AdminDashboard from "../screens/Users/AdminDashboard";
 import LeaderDashboard from "../screens/Users/LeaderDashboard";
 import UserDashboard from "../screens/Users/UserDashboard";
 import FormBuilderScreen from "../screens/Forms/FormBuilderScreen"; 
-import DynamicForm from "../components/DynamicForm"; // 🔹 Importamos correctamente DynamicForm
+import DynamicForm from "../components/DynamicForm";
 
 // Definimos las rutas de navegación
 export type RootStackParamList = {
@@ -21,11 +22,13 @@ export type RootStackParamList = {
   Register: undefined;
   Home: undefined;
   Form: undefined;
+  Reports : undefined;
+  RestoreScreen: undefined;
   AdminDashboard: undefined;
   LeaderDashboard: undefined;
   UserDashboard: undefined;
   FormBuilderScreen: undefined;
-  DynamicForm: { formId: string }; // 🔹 DynamicForm ahora recibe formId como parámetro
+  DynamicForm: { formId: string }; 
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,9 +64,11 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        
         {/* Pantallas de Autenticación */}
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="RestoreScreen" component={RestoreScreen} options={{ headerShown: false }} />
 
         {/* Pantallas principales */}
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Inicio" }} />

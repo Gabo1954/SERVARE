@@ -13,7 +13,6 @@ interface Props {
 }
 
 const UserDashboard: React.FC<Props> = ({ navigation }) => {
-  // Función para cerrar sesión
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("user");
@@ -26,31 +25,23 @@ const UserDashboard: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={globalStyles.container}>
-      {/* Ícono de usuario */}
       <Icon name="account" size={60} color="#fff" style={{ marginBottom: 10 }} />
-      
       <Text style={globalStyles.title}>Panel de Usuario</Text>
       <Text style={globalStyles.description}>Accede a los formularios y reportes asignados.</Text>
 
-      {/* Botón para ir a Home */}
-      <TouchableOpacity style={globalStyles.button} onPress={() => navigation.navigate("Home")}>
-        <Icon name="home" size={20} color="#fff" />
-        <Text style={globalStyles.buttonText}>Volver a Home</Text>
-      </TouchableOpacity>
-
-      {/* Botón para ir a la pantalla de creación de formularios */}
-      <TouchableOpacity style={[globalStyles.button, { backgroundColor: "#5A9EC9" }]} onPress={() => navigation.navigate("FormBuilderScreen")}>
-        <Icon name="file-document-edit" size={20} color="#fff" />
-        <Text style={globalStyles.buttonText}>Crear Formulario</Text>
-      </TouchableOpacity>
-
-      {/* Botón de Cerrar Sesión */}
-      <TouchableOpacity style={[globalStyles.button, { backgroundColor: "#DC3545" }]} onPress={handleLogout}>
-        <Icon name="logout" size={20} color="#fff" />
-        <Text style={globalStyles.buttonText}>Cerrar Sesión</Text>
-      </TouchableOpacity>
+      {/* Botones de funcionalidades futuras */}
+      <DashboardButton icon="home" text="Volver a Home" color="#f39c12" onPress={() => navigation.navigate("Home")} />
+      <DashboardButton icon="file-document-edit" text="Crear Formulario" color="#007bff" onPress={() => navigation.navigate("FormBuilderScreen")} />
+      <DashboardButton icon="logout" text="Cerrar Sesión" color="#dc3545" onPress={handleLogout} />
     </View>
   );
 };
+
+const DashboardButton = ({ icon, text, color, onPress }: { icon: string; text: string; color: string; onPress: () => void }) => (
+  <TouchableOpacity style={[globalStyles.button, { backgroundColor: color }]} onPress={onPress}>
+    <Icon name={icon} size={20} color="#fff" style={globalStyles.icon} />
+    <Text style={globalStyles.buttonText}>{text}</Text>
+  </TouchableOpacity>
+);
 
 export default UserDashboard;

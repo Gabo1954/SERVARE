@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
@@ -48,67 +48,81 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Espacio para la imagen */}
-      <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        {/* Espacio para la imagen */}
+        <Image source={require("../../assets/images/logo.png")} style={styles.logo} />
 
-      <Text style={styles.welcomeText}>Bienvenido</Text>
+        <Text style={styles.welcomeText}>Bienvenido</Text>
 
-      {/* Campo de correo */}
-      <View style={styles.inputContainer}>
-        <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
-        <TextInput
-          placeholder="Correo"
-          placeholderTextColor="#ccc"
-          style={styles.input}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+        {/* Campo de correo */}
+        <View style={styles.inputContainer}>
+          <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Correo"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Campo de contraseña */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Contraseña"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Botón de Login */}
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+        </TouchableOpacity>
+
+        {/* Texto "¿No tiene una cuenta?" */}
+        <Text style={styles.registerPrompt}>¿No tiene una cuenta?</Text>
+
+        {/* Botón para crear cuenta */}
+        <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.registerButtonText}>Crear cuenta</Text>
+        </TouchableOpacity>
+        
+        {/* Botón para restaurar contraseña */}
+        <TouchableOpacity style={styles.restoreButton} onPress={() => navigation.navigate("RestoreScreen")}>
+        <Text style={styles.restoreButtonText}>¿Olvidaste tu contraseña?</Text>
+        </TouchableOpacity>
+
       </View>
-
-      {/* Campo de contraseña */}
-      <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
-        <TextInput
-          placeholder="Contraseña"
-          placeholderTextColor="#ccc"
-          style={styles.input}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-
-      {/* Botón de Login */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Iniciar sesión</Text>
-      </TouchableOpacity>
-
-      {/* Texto "¿No tiene una cuenta?" */}
-      <Text style={styles.registerPrompt}>¿No tiene una cuenta?</Text>
-
-      {/* Botón para crear cuenta */}
-      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.registerButtonText}>Crear cuenta</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#1E3A47",
     alignItems: "center",
     justifyContent: "center",
-    padding: 30,
+    paddingHorizontal: 30,
   },
   logo: {
-    width: 200, 
-    height: 200, 
+    width: "80%", // Asegura que el logo se ajuste a un 80% de la pantalla
+    height: undefined, 
+    aspectRatio: 1, // Mantiene la relación de aspecto original
+    resizeMode: "contain", // Asegura que el logo se ajuste sin distorsión
     marginBottom: 40,
-    resizeMode: "contain",
   },
   welcomeText: {
     fontSize: 24,
@@ -162,6 +176,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  restoreButton: {
+    marginTop: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+  },
+  
+  restoreButtonText: {
+    color: "#5BBFBA",
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  
 });
 
 export default LoginScreen;

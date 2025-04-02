@@ -30,26 +30,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const quickActions = [
-    { id: '1', title: 'Nuevo Formulario', screen: 'Form' },
-    { id: '2', title: 'Ver Reportes', screen: 'Reports' },
-    { id: '3', title: 'Galería de Fotos', screen: 'Gallery' },
+    { id: '1', title: 'Proyetos', screen: 'Projects' },
+    { id: '2', title: 'Formulario', screen: 'FormBuilderScreen' },
+    { id: '3', title: 'Reportes', screen: 'Reports' },
   ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bienvenido a Servare</Text>
       <Text style={styles.subtitle}>Rol: {userRole}</Text>
-
-      {/* Accesos Rápidos */}
-      <FlatList
-        data={quickActions}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('FormBuilderScreen')}>
-            <Text style={styles.buttonText}>{item.title}</Text>
-          </TouchableOpacity>
-        )}
-      />
 
       {/* Opciones Basadas en el Rol */}
       {userRole === 'admin' && (
@@ -63,6 +52,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.buttonText}>Panel de Líder</Text>
         </TouchableOpacity>
       )}
+
+      {userRole === 'user' && (
+        <TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate('UserDashboard')}>
+          <Text style={styles.buttonText}>Panel de Usuario</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -74,6 +69,7 @@ const styles = StyleSheet.create({
   button: { backgroundColor: '#007bff', padding: 12, borderRadius: 8, width: '80%', alignItems: 'center', marginBottom: 10 },
   adminButton: { backgroundColor: '#dc3545', padding: 12, borderRadius: 8, width: '80%', alignItems: 'center', marginTop: 10 },
   leaderButton: { backgroundColor: '#ff9800', padding: 12, borderRadius: 8, width: '80%', alignItems: 'center', marginTop: 10 },
+  userButton: { backgroundColor: '#28a745', padding: 12, borderRadius: 8, width: '80%', alignItems: 'center', marginTop: 10 },
   buttonText: { color: '#fff', fontWeight: 'bold' },
 });
 

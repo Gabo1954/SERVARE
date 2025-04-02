@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -16,9 +16,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('usuario'); // Valor por defecto
+  const [empresa, setEmpresa] = useState(''); // Nuevo campo de empresa
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !empresa) {
       Alert.alert('Error', 'Todos los campos son obligatorios');
       return;
     }
@@ -28,7 +29,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     try {
-      const user = { email, password, role };
+      const user = { email, password, role, empresa };
       await AsyncStorage.setItem('user', JSON.stringify(user));
       Alert.alert('Registro exitoso', `Usuario registrado como ${role}`);
       navigation.navigate('Login');
@@ -38,93 +39,115 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Logo */}
-      <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        {/* Logo */}
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
 
-      <Text style={styles.welcomeText}>Crear cuenta</Text>
+        <Text style={styles.welcomeText}>Crear cuenta</Text>
 
-      {/* Campo de correo */}
-      <View style={styles.inputContainer}>
-        <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
-        <TextInput
-          placeholder="Correo"
-          placeholderTextColor="#ccc"
-          style={styles.input}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
+        {/* Campo de correo */}
+        <View style={styles.inputContainer}>
+          <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Correo"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        {/* Campo de contraseña */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Contraseña"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Confirmar contraseña */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Confirmar Contraseña"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        {/* Campo de Empresa */}
+        <View style={styles.inputContainer}>
+          <MaterialIcons name="business" size={24} color="white" style={styles.icon} />
+          <TextInput
+            placeholder="Empresa"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            value={empresa}
+            onChangeText={setEmpresa}
+          />
+        </View>
+
+        {/* Selector de rol con ícono */}
+        <View style={styles.pickerContainer}>
+          <Ionicons name="people" size={24} color="white" style={styles.pickerIcon} />
+          <Picker
+            selectedValue={role}
+            onValueChange={(itemValue) => setRole(itemValue)}
+            style={styles.picker}
+            dropdownIconColor="white"
+            mode="dropdown"
+          >
+            <Picker.Item label="Cliente Institución" value="clienteInstitucion" color="black" />
+            <Picker.Item label="Cliente Encargado Proyecto" value="clienteEncargado" color="black" />
+            <Picker.Item label="Cliente Usuario" value="clienteUsuario" color="black" />
+            <Picker.Item label="Servare" value="servare" color="black" />
+            <Picker.Item label="Administrador" value="admin" color="black" />
+          </Picker>
+        </View>
+
+        {/* Botón de Registro */}
+        <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+          <Text style={styles.registerButtonText}>Registrarse</Text>
+        </TouchableOpacity>
+
+        {/* Texto "¿Ya tienes cuenta?" */}
+        <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
+
+        {/* Botón para ir al login */}
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Campo de contraseña */}
-      <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
-        <TextInput
-          placeholder="Contraseña"
-          placeholderTextColor="#ccc"
-          style={styles.input}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-
-      {/* Confirmar contraseña */}
-      <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
-        <TextInput
-          placeholder="Confirmar Contraseña"
-          placeholderTextColor="#ccc"
-          style={styles.input}
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-      </View>
-
-      {/* Selector de rol */}
-      <View style={styles.pickerContainer}>
-  <Picker
-    selectedValue={role}
-    onValueChange={(itemValue) => setRole(itemValue)}
-    style={styles.picker}
-    dropdownIconColor="white"
-    mode="dropdown"
-  >
-    <Picker.Item label="Usuario Básico" value="usuario" color="white" />
-    <Picker.Item label="Líder de Equipo" value="lider" color="white" />
-    <Picker.Item label="Administrador" value="admin" color="white" />
-  </Picker>
-</View>
-
-      {/* Botón de Registro */}
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerButtonText}>Registrarse</Text>
-      </TouchableOpacity>
-
-      {/* Texto "¿Ya tienes cuenta?" */}
-      <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
-
-      {/* Botón para ir al login */}
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.loginButtonText}>Iniciar sesión</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#1E3A47",
     alignItems: "center",
     justifyContent: "center",
-    padding: 30,
+    padding: 20,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 360,
     marginBottom: 40,
     resizeMode: "contain",
   },
@@ -139,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 25,
     paddingHorizontal: 15,
-    width: "90%",
+    width: "100%",
     marginBottom: 15,
   },
   icon: {
@@ -151,18 +174,22 @@ const styles = StyleSheet.create({
     height: 50,
   },
   pickerContainer: {
+    flexDirection: 'row', // Alineamos el ícono y el picker horizontalmente
+    alignItems: 'center', // Alineamos verticalmente
     backgroundColor: "rgba(255, 255, 255, 0.2)", // Fondo oscuro semi-transparente
     borderRadius: 25,
-    width: "90%",
+    width: "100%",
     marginBottom: 15,
     paddingHorizontal: 10,
-    justifyContent: "center",
-    overflow: "hidden", // Evita desbordes
+  },
+  pickerIcon: {
+    marginRight: 10,
   },
   picker: {
-    height: 50,
-    color: "white", // Forzar el texto en blanco
+    flex: 1, // Ocupa el resto del espacio disponible
+    color: "white", // Aseguramos que el texto sea blanco
     backgroundColor: "transparent", // Evita fondo blanco por defecto
+    height: 50,
   },
   registerButton: {
     backgroundColor: "#5BBFBA",
