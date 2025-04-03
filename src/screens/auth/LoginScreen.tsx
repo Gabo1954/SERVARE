@@ -12,10 +12,10 @@ interface Props {
 }
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (): Promise<void> => {
     if (!email || !password) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
@@ -30,11 +30,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
           // Redirigir según el rol del usuario
           if (role === "admin") {
-            navigation.navigate("AdminDashboard");
-          } else if (role === "lider") {
+            navigation.navigate("HomeScreen");
+          } else if (role === "clienteEncargado") {
             navigation.navigate("LeaderDashboard");
-          } else {
+          } else if (role === "clienteUsuario") {
             navigation.navigate("UserDashboard");
+          } else if (role === "servare") {
+            navigation.navigate("AdminDashboard");
+          } else {
+            Alert.alert("Error", "Rol no reconocido");
           }
         } else {
           Alert.alert("Error", "Correo o contraseña incorrectos");
@@ -93,12 +97,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")}>
           <Text style={styles.registerButtonText}>Crear cuenta</Text>
         </TouchableOpacity>
-        
+
         {/* Botón para restaurar contraseña */}
         <TouchableOpacity style={styles.restoreButton} onPress={() => navigation.navigate("RestoreScreen")}>
-        <Text style={styles.restoreButtonText}>¿Olvidaste tu contraseña?</Text>
+          <Text style={styles.restoreButtonText}>¿Olvidaste tu contraseña?</Text>
         </TouchableOpacity>
-
       </View>
     </ScrollView>
   );
@@ -189,7 +192,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
-  
 });
 
 export default LoginScreen;

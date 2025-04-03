@@ -16,6 +16,7 @@ import UserDashboard from "../screens/Users/UserDashboard";
 import FormBuilderScreen from "../screens/Forms/FormBuilderScreen"; 
 import DynamicForm from "../components/DynamicForm";
 
+
 // Definimos las rutas de navegación
 export type RootStackParamList = {
   Login: undefined;
@@ -29,6 +30,8 @@ export type RootStackParamList = {
   UserDashboard: undefined;
   FormBuilderScreen: undefined;
   DynamicForm: { formId: string }; 
+  HomeScreen: undefined;
+  
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
