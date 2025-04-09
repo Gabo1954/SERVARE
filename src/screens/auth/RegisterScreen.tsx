@@ -15,21 +15,23 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('usuario'); // Valor por defecto
-  const [empresa, setEmpresa] = useState(''); // Nuevo campo de empresa
+  const [role, setRole] = useState('usuario');
+  const [empresa, setEmpresa] = useState('');
+  const [isEmpresaEnabled, setIsEmpresaEnabled] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword || !empresa) {
-      Alert.alert('Error', 'Todos los campos son obligatorios');
+    if (!email || !password || !confirmPassword || (isEmpresaEnabled && !empresa)) {
+      Alert.alert('Error', 'Todos los campos obligatorios deben ser completados');
       return;
     }
+    
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
 
     try {
-      const user = { email, password, role, empresa };
+      const user = { email, password, role, empresa: isEmpresaEnabled ? empresa : '' };
       await AsyncStorage.setItem('user', JSON.stringify(user));
       Alert.alert('Registro exitoso', `Usuario registrado como ${role}`);
       navigation.navigate('Login');
@@ -41,12 +43,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
-        {/* Logo */}
         <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-
         <Text style={styles.welcomeText}>Crear cuenta</Text>
 
-        {/* Campo de correo */}
+
         <View style={styles.inputContainer}>
           <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
           <TextInput
@@ -59,7 +59,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
 
-        {/* Campo de contraseña */}
+
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
           <TextInput
@@ -72,7 +72,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
 
-        {/* Confirmar contraseña */}
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
           <TextInput
@@ -85,19 +84,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
 
-        {/* Campo de Empresa */}
-        <View style={styles.inputContainer}>
-          <MaterialIcons name="business" size={24} color="white" style={styles.icon} />
-          <TextInput
-            placeholder="Empresa"
-            placeholderTextColor="#ccc"
-            style={styles.input}
-            value={empresa}
-            onChangeText={setEmpresa}
-          />
-        </View>
-
-        {/* Selector de rol con ícono */}
         <View style={styles.pickerContainer}>
           <Ionicons name="people" size={24} color="white" style={styles.pickerIcon} />
           <Picker
@@ -115,15 +101,45 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           </Picker>
         </View>
 
-        {/* Botón de Registro */}
+        <TouchableOpacity 
+          style={styles.checkboxContainer}
+          onPress={() => {
+            const newValue = !isEmpresaEnabled;
+            setIsEmpresaEnabled(newValue);
+            if (!newValue) setEmpresa('');
+          }}
+        >
+          <MaterialIcons 
+            name={isEmpresaEnabled ? "check-box" : "check-box-outline-blank"} 
+            size={24} 
+            color="white" 
+          />
+          <Text style={styles.checkboxLabel}>Registrar como empresa</Text>
+        </TouchableOpacity>
+
+        {isEmpresaEnabled && (
+          <View style={styles.inputContainer}>
+            <MaterialIcons name="business" size={24} color="white" style={styles.icon} />
+            <TextInput
+              placeholder="Empresa"
+              placeholderTextColor="#ccc"
+              style={styles.input}
+              value={empresa}
+              onChangeText={setEmpresa}
+              editable={isEmpresaEnabled}
+            />
+          </View>
+        )}
+
+
         <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
           <Text style={styles.registerButtonText}>Registrarse</Text>
         </TouchableOpacity>
 
-        {/* Texto "¿Ya tienes cuenta?" */}
+
         <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
 
-        {/* Botón para ir al login */}
+
         <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginButtonText}>Iniciar sesión</Text>
         </TouchableOpacity>
@@ -174,9 +190,9 @@ const styles = StyleSheet.create({
     height: 50,
   },
   pickerContainer: {
-    flexDirection: 'row', // Alineamos el ícono y el picker horizontalmente
-    alignItems: 'center', // Alineamos verticalmente
-    backgroundColor: "rgba(255, 255, 255, 0.2)", // Fondo oscuro semi-transparente
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 25,
     width: "100%",
     marginBottom: 15,
@@ -186,9 +202,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   picker: {
-    flex: 1, // Ocupa el resto del espacio disponible
-    color: "white", // Aseguramos que el texto sea blanco
-    backgroundColor: "transparent", // Evita fondo blanco por defecto
+    flex: 1,
+    color: "white",
+    backgroundColor: "transparent",
     height: 50,
   },
   registerButton: {
@@ -220,6 +236,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    width: '100%',
+    paddingLeft: 10,
+  },
+  checkboxLabel: {
+    color: 'white',
+    marginLeft: 10,
+    fontSize: 16,
   },
 });
 

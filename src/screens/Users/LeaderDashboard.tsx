@@ -40,7 +40,7 @@ const LeaderDashboard: React.FC = () => {
   const goToForms = () => navigation.navigate("FormBuilderScreen");
   const goToReports = () => navigation.navigate("ReportScreen");
   const goToTeam = () => navigation.navigate("TeamScreen");
-  const goToContact = () => navigation.navigate("Contact");
+  const goToContact = () => navigation.navigate("ContactScreen");
 
   return (
     <View style={styles.container}>
