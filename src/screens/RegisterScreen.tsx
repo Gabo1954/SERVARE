@@ -1,6 +1,19 @@
+<<<<<<< HEAD
 // RegisterScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from 'react-native';
+=======
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  StyleSheet,
+} from 'react-native';
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -24,10 +37,15 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       Alert.alert('Error', 'Todos los campos son obligatorios');
       return;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
+<<<<<<< HEAD
     try {
       const user = { email, password, role };
       await AsyncStorage.setItem('usuario', JSON.stringify(user));
@@ -35,15 +53,56 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       navigation.navigate('Login');
     } catch (error) {
       Alert.alert('Error', 'No se pudo registrar el usuario');
+=======
+
+    try {
+      // Obtener usuarios existentes
+      const storedUsers = await AsyncStorage.getItem('users');
+      const users = storedUsers ? JSON.parse(storedUsers) : [];
+
+      // Verificar si el usuario ya existe
+      const userExists = users.find((u: any) => u.email === email);
+      if (userExists) {
+        Alert.alert('Error', 'Ya existe una cuenta con este correo');
+        return;
+      }
+
+      // Crear nuevo usuario
+      const newUser = {
+        id: Date.now().toString(),
+        email,
+        password,
+        role,
+      };
+
+      users.push(newUser);
+      await AsyncStorage.setItem('users', JSON.stringify(users));
+
+      // Guardar sesión actual (opcional)
+      await AsyncStorage.setItem('user', JSON.stringify(newUser));
+
+      Alert.alert('Registro exitoso', `Usuario registrado como ${role}`);
+      navigation.navigate('Login');
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al registrar el usuario');
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
     }
   };
 
   return (
     <View style={styles.container}>
       <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+<<<<<<< HEAD
       <Text style={styles.welcomeText}>Crear cuenta</Text>
       <View style={styles.inputContainer}>
         <MaterialIcons name="email" size={24} color="black" style={styles.icon} />
+=======
+
+      <Text style={styles.welcomeText}>Crear cuenta</Text>
+
+      <View style={styles.inputContainer}>
+        <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
         <TextInput
           placeholder="Correo"
           placeholderTextColor="#ccc"
@@ -53,8 +112,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setEmail}
         />
       </View>
+<<<<<<< HEAD
       <View style={styles.inputContainer}>
         <Ionicons name="lock-closed" size={24} color="black" style={styles.icon} />
+=======
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
         <TextInput
           placeholder="Contraseña"
           placeholderTextColor="#ccc"
@@ -64,8 +129,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setPassword}
         />
       </View>
+<<<<<<< HEAD
       <View style={styles.inputContainer}>
         <Ionicons name="lock-closed-outline" size={24} color="black" style={styles.icon} />
+=======
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="lock-closed-outline" size={24} color="white" style={styles.icon} />
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
         <TextInput
           placeholder="Confirmar Contraseña"
           placeholderTextColor="#ccc"
@@ -75,6 +146,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setConfirmPassword}
         />
       </View>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={role}
@@ -83,6 +158,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           dropdownIconColor="white"
           mode="dropdown"
         >
+<<<<<<< HEAD
           <Picker.Item label="Administrador" value="admin" />
           <Picker.Item label="Líder de Equipo" value="lider" />
           <Picker.Item label="Usuario Básico" value="usuario" />
@@ -93,6 +169,24 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       </TouchableOpacity>
       <Text style={styles.loginPrompt}>¿Ya tienes cuenta?</Text>
       <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+=======
+          <Picker.Item label="Usuario Básico" value="usuario" color="white" />
+          <Picker.Item label="Líder de Equipo" value="lider" color="white" />
+          <Picker.Item label="Administrador" value="admin" color="white" />
+        </Picker>
+      </View>
+
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerButtonText}>Registrarse</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
+
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={() => navigation.navigate('Login')}
+      >
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
     </View>
@@ -142,10 +236,18 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 10,
     justifyContent: "center",
+<<<<<<< HEAD
   },
   picker: {
     height: 50,
     color: "black",
+=======
+    overflow: "hidden",
+  },
+  picker: {
+    height: 50,
+    color: "white",
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
     backgroundColor: "transparent",
   },
   registerButton: {
@@ -181,4 +283,7 @@ const styles = StyleSheet.create({
 });
 
 export default RegisterScreen;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)

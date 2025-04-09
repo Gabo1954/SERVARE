@@ -1,6 +1,19 @@
+<<<<<<< HEAD
 // LoginScreen.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from "react-native";
+=======
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  StyleSheet,
+} from "react-native";
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -17,6 +30,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+<<<<<<< HEAD
     if (!email.trim() || !password.trim()) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
@@ -35,6 +49,23 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         const { email: storedEmail, password: storedPassword, role } = userData;
         if (email === storedEmail && password === storedPassword) {
           Alert.alert("Bienvenido", `Has iniciado sesión como ${role}`);
+=======
+    if (!email || !password) {
+      Alert.alert("Error", "Todos los campos son obligatorios");
+      return;
+    }
+
+    try {
+      const storedUserStr = await AsyncStorage.getItem("user");
+      if (storedUserStr) {
+        const storedUser = JSON.parse(storedUserStr);
+        const { email: storedEmail, password: storedPassword, role } = storedUser;
+
+        if (email === storedEmail && password === storedPassword) {
+          Alert.alert("Bienvenido", `Has iniciado sesión como ${role}`);
+
+          // Redirigir según el rol
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
           switch (role) {
             case "admin":
               navigation.navigate("AdminDashboard");
@@ -42,8 +73,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             case "lider":
               navigation.navigate("LeaderDashboard");
               break;
+<<<<<<< HEAD
             default:
               navigation.navigate("UserDashboard");
+=======
+            case "usuario":
+              navigation.navigate("UserDashboard");
+              break;
+            default:
+              Alert.alert("Error", "Rol de usuario no reconocido");
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
           }
         } else {
           Alert.alert("Error", "Correo o contraseña incorrectos");
@@ -52,14 +91,25 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         Alert.alert("Error", "No hay usuarios registrados");
       }
     } catch (error) {
+<<<<<<< HEAD
       Alert.alert("Error", "No se pudo iniciar sesión");
+=======
+      console.error(error);
+      Alert.alert("Error", "Ocurrió un error al iniciar sesión");
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
     }
   };
 
   return (
     <View style={styles.container}>
+<<<<<<< HEAD
       <Image source={require("../assets/images/logo.png")} style={styles.logo} resizeMode="contain" />
       <Text style={styles.welcomeText}>Bienvenido</Text>
+=======
+      <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+      <Text style={styles.welcomeText}>Bienvenido</Text>
+
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
       <View style={styles.inputContainer}>
         <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
         <TextInput
@@ -67,11 +117,18 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           placeholderTextColor="#ccc"
           style={styles.input}
           keyboardType="email-address"
+<<<<<<< HEAD
           autoCapitalize="none"
+=======
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
           value={email}
           onChangeText={setEmail}
         />
       </View>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
       <View style={styles.inputContainer}>
         <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
         <TextInput
@@ -79,16 +136,30 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           placeholderTextColor="#ccc"
           style={styles.input}
           secureTextEntry
+<<<<<<< HEAD
           autoCapitalize="none"
+=======
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
           value={password}
           onChangeText={setPassword}
         />
       </View>
+<<<<<<< HEAD
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.7}>
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
       <Text style={styles.registerPrompt}>¿No tiene una cuenta?</Text>
       <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")} activeOpacity={0.7}>
+=======
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Iniciar sesión</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.registerPrompt}>¿No tienes una cuenta?</Text>
+
+      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate("Register")}>
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
         <Text style={styles.registerButtonText}>Crear cuenta</Text>
       </TouchableOpacity>
     </View>
@@ -107,6 +178,10 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 40,
+<<<<<<< HEAD
+=======
+    resizeMode: "contain",
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
   },
   welcomeText: {
     fontSize: 24,
@@ -163,5 +238,8 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 31649b0 (Primer commit desde la rama Gabriel)
