@@ -39,7 +39,7 @@ import MyFichasReport from "../screens/Reports/MyFichasReport";
 import GraficoReport from "../screens/Reports/Graficos/GraficoReport";
 import GeneralFichaReport from "../screens/Reports/Graficos/GeneralFichaReport";
 import ContactScreen from "../screens/Users/ContactScreen";
-import CreateTicketScreen from "../screens/CreateTicketScreen";
+import CreateTicketScreen from "../screens/auth/CreateTicketScreen";
 
 
 // Definimos las rutas de navegación
