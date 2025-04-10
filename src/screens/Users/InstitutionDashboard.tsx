@@ -16,7 +16,7 @@ const InstitutionDashboard: React.FC = () => {
 
   const goToProfile = () => {
     setMenuVisible(false);
-    navigation.navigate("Profile");
+    navigation.navigate("ProfileScreen");
   };
 
   const goToProjects = () => navigation.navigate("Projects");
@@ -83,28 +83,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1E3A47",
-    alignItems: "center", // Centra el contenido horizontalmente
+    alignItems: "center", 
   },
   header: {
-    flexDirection: "column", // Cambié la dirección a columna para centrar el logo sobre los botones
-    alignItems: "center", // Centra el logo horizontalmente
+    flexDirection: "column", 
+    alignItems: "center", 
     justifyContent: "center",
     paddingTop: 40,
     paddingBottom: 10,
     backgroundColor: "#1E3A47",
-    width: "100%", // Asegura que ocupe todo el ancho
+    width: "100%", 
   },
   menuButton: {
-    position: "absolute", // Mueve el botón de menú a la esquina superior izquierda
+    position: "absolute", 
     left: 15,
     top: 40,
     padding: 5,
   },
   logo: {
-    width: 80, // Puedes ajustar el tamaño si es necesario
-    height: 80,
+    width: 300, 
+    height: 280,
     resizeMode: "contain",
-    marginBottom: 20, // Da espacio entre el logo y los botones
+    marginBottom: 20,
   },
   dropdownMenu: {
     position: "absolute",
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    width: "100%", // Asegura que ocupe todo el ancho
+    width: "100%", 
   },
   row: {
     flexDirection: "row",

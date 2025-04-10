@@ -11,11 +11,11 @@ const FormMenuScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const goToCreateForm = () => {
-    navigation.navigate("CreateForm"); // Remplazar con la ruta que estamos usasndo pra ello
+    navigation.navigate("CreateForm"); 
   };
 
   const goToViewForms = () => {
-    navigation.navigate("ViewForms"); // Remplazar con la ruta que estamos usasndo pra ello
+    navigation.navigate("ViewForms"); 
   };
 
   const goToProfile = () => {

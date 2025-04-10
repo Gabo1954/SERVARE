@@ -27,14 +27,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         const { email: storedEmail, password: storedPassword, role } = JSON.parse(storedUser);
         if (email === storedEmail && password === storedPassword) {
           Alert.alert("Bienvenido", `Has iniciado sesión como ${role}`);
-
-         // Redirigir según el rol del usuario
-         if (role === "clienteInstitucion") {
-          navigation.navigate("InstitutionDashboard");
+         if (role === "servare") {
+          navigation.navigate("AdminDashboard");
         } else if (role === "clienteUsuario") {
           navigation.navigate("LeaderDashboard");
-        } else if (role === "servare") {
-          navigation.navigate("AdminDashboard");
+        } else if (role === "clienteInstitucion") {
+          navigation.navigate("InstitutionDashboard");
         } else {
           Alert.alert("Error", "Rol no reconocido");
         }

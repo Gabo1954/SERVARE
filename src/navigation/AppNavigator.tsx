@@ -40,7 +40,7 @@ import GraficoReport from "../screens/Reports/Graficos/GraficoReport";
 import GeneralFichaReport from "../screens/Reports/Graficos/GeneralFichaReport";
 import ContactScreen from "../screens/Users/ContactScreen";
 import CreateTicketScreen from "../screens/auth/CreateTicketScreen";
-
+import ProfileScreen from "../screens/auth/profile";
 
 // Definimos las rutas de navegación
 export type RootStackParamList = {
@@ -48,7 +48,8 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   RestoreScreen: undefined;
-  
+  ProfileScreen:undefined;
+  Restore: undefined;
   // Principales
   Home: undefined;
   Form: undefined;
@@ -145,13 +146,13 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="RestoreScreen" component={RestoreScreen} options={{ headerShown: false }} />
-
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: "Mi Perfil" }} />
         {/* Pantallas principales */}
        
         <Stack.Screen name="Form" component={FormScreen} options={{ title: "Formulario" }} />
 
         {/* Dashboards */}
-        <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ title: "Administrador" }} />
+        <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ title: "Servare" }} />
         <Stack.Screen name="LeaderDashboard" component={LeaderDashboard} options={{ title: "Líder de Equipo" }} />
         <Stack.Screen name="UserDashboard" component={UserDashboard} options={{ title: "Usuario" }} />
         <Stack.Screen name="InstitutionDashboard" component={InstitutionDashboard} options={{ title: "Institución" }} />

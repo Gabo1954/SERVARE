@@ -43,7 +43,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
-        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
+        </TouchableOpacity>
         <Text style={styles.welcomeText}>Crear cuenta</Text>
 
 
@@ -93,7 +95,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             dropdownIconColor="white"
             mode="dropdown"
           >
-            
+            <Picker.Item label="" value="" color="" />
             <Picker.Item label="Institución" value="clienteInstitucion" color="black" />
             <Picker.Item label="Usuario General" value="clienteUsuario" color="black" />
           </Picker>
