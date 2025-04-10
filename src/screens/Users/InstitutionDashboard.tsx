@@ -19,7 +19,7 @@ const InstitutionDashboard: React.FC = () => {
     navigation.navigate("ProfileScreen");
   };
 
-  const goToProjects = () => navigation.navigate("Projects");
+  const goToProjects = () => navigation.navigate("ProjectMenuScreen");
   const goToForms = () => navigation.navigate("FormBuilderScreen");
   const goToReports = () => navigation.navigate("ReportScreen");
   const goToEmployees = () => navigation.navigate("Employees");

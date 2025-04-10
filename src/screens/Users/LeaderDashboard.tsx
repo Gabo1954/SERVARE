@@ -24,7 +24,7 @@ const LeaderDashboard: React.FC = () => {
 
   const goToProfile = () => {
     setMenuVisible(false);
-    navigation.navigate("Profile");
+    navigation.navigate("ProfileScreen");
   };
 
   const handleLogout = async () => {
@@ -47,19 +47,19 @@ const LeaderDashboard: React.FC = () => {
       {/* Header con Logo y Menú */}
       <View style={styles.header}>
         {/* Menú desplegable */}
-        <View>
-          <TouchableOpacity onPress={() => setMenuVisible(true)}>
-            <Ionicons name="menu" size={30} color="white" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Ionicons name="menu" size={30} color="white" />
+        </TouchableOpacity>
 
         {/* Logo centrado */}
-        <Image
-          source={require("../../assets/images/logo.png")}
-          style={styles.logo}
-        />
+        <TouchableOpacity style={styles.logoContainer}>
+          <Image
+            source={require("../../assets/images/logo.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
 
-        {/* Espacio vacío para alinear */}
+        {/* Espacio vacío para alinear el menú */}
         <View style={{ width: 30 }} />
       </View>
 
@@ -95,9 +95,6 @@ const LeaderDashboard: React.FC = () => {
         <TouchableOpacity style={styles.squareButton} onPress={goToReports}>
           <Text style={styles.buttonText}>Reportes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.squareButton} onPress={goToTeam}>
-          <Text style={styles.buttonText}>Equipo</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.buttonPrimary]}
           onPress={goToContact}
@@ -122,12 +119,17 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",  // Alineación centrada para el logo
     paddingHorizontal: width * 0.05,
   },
+  logoContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   logo: {
-    width: width * 0.2,
-    height: width * 0.2,
+    width: width * 0.4,
+    height: width * 0.4,
     resizeMode: "contain",
   },
   overlay: {

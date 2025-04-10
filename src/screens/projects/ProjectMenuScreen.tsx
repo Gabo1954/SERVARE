@@ -16,7 +16,7 @@ const ProjectMenuScreen: React.FC = () => {
 
   const goToProfile = () => {
     setMenuVisible(false);
-    navigation.navigate("Profile");
+    navigation.navigate("ProfileScreen");
   };
 
   const goToCreateProject = () => navigation.navigate("ProjectManager");
@@ -35,7 +35,7 @@ const ProjectMenuScreen: React.FC = () => {
         <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
           <Ionicons name="menu" size={30} color="white" />
         </TouchableOpacity>
-        <Image source={require('../../assets/images/Logo1.png')} style={styles.logo} />
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
       </View>
 
       {menuVisible && (
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 280,
+    height: 280,
     resizeMode: "contain",
     marginBottom: 20,
   },

@@ -11,7 +11,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, "ReportScreen">;
 const ReportScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [menuVisible, setMenuVisible] = useState(false);
-  
+
   const toggleMenu = () => setMenuVisible(!menuVisible);
 
   const goToProfile = () => {
@@ -19,20 +19,17 @@ const ReportScreen: React.FC = () => {
     navigation.navigate("Profile");
   };
 
- 
   const goToFichaReport = () => {
-    navigation.navigate("FichaReport"); // Ruta para reportes de tipo Ficha,Remplazar con la ruta que estamos usasndo pra ello
+    navigation.navigate("FichaReport");
   };
 
   const goToGraficoReport = () => {
-    navigation.navigate("GraficoReport"); // Ruta para reportes de tipo Gráfico,Remplazar con la ruta que estamos usasndo pra ello
+    navigation.navigate("GraficoReport");
   };
 
   const goToExcelReport = () => {
-    navigation.navigate("ExcelReport"); // Ruta para reportes de tipo Excel,Remplazar con la ruta que estamos usasndo pra ello
+    navigation.navigate("ExcelReport");
   };
-
-  
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("user");
@@ -40,82 +37,131 @@ const ReportScreen: React.FC = () => {
     setMenuVisible(false);
     navigation.navigate("Login");
   };
+
   return (
     <View style={styles.container}>
-      
       <View style={styles.header}>
-        <Image source={require("../../assets/images/logo.png")} style={styles.logo} />
-        <TouchableOpacity style={styles.profileButton} onPress={goToProfile}>
-          <Ionicons name="person-circle" size={30} color="white" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.logoButton}>
+          <Image source={require("../../assets/images/logo.png")} style={styles.logo} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
+          <Ionicons name="menu" size={30} color="white" />
         </TouchableOpacity>
       </View>
 
-    
+      {menuVisible && (
+        <View style={styles.dropdownMenu}>
+          <TouchableOpacity onPress={goToProfile} style={styles.menuItem}>
+            <Ionicons name="person-circle" size={20} color="white" />
+            <Text style={styles.menuText}>Perfil</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.menuItem}>
+            <Ionicons name="log-out-outline" size={20} color="white" />
+            <Text style={styles.menuText}>Cerrar sesión</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.squareButton} onPress={goToFichaReport}>
-          <MaterialCommunityIcons name="file-document-outline" size={30} color="white" />
-          <Text style={styles.buttonText}>Ficha</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.squareButton} onPress={goToGraficoReport}>
-          <MaterialCommunityIcons name="chart-line" size={30} color="white" />
-          <Text style={styles.buttonText}>Gráfico</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.squareButton} onPress={goToExcelReport}>
-          <MaterialCommunityIcons name="microsoft-excel" size={30} color="white" />
-          <Text style={styles.buttonText}>Excel</Text>
-        </TouchableOpacity>
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.squareButton} onPress={goToFichaReport}>
+            <MaterialCommunityIcons name="file-document-outline" size={30} color="white" />
+            <Text style={styles.buttonText}>Ficha</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.squareButton} onPress={goToGraficoReport}>
+            <MaterialCommunityIcons name="chart-line" size={30} color="white" />
+            <Text style={styles.buttonText}>Gráfico</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.row}>
+          <TouchableOpacity style={styles.squareButton} onPress={goToExcelReport}>
+            <MaterialCommunityIcons name="microsoft-excel" size={30} color="white" />
+            <Text style={styles.buttonText}>Excel</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
 
-export default ReportScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1E3A47", 
+    backgroundColor: "#1E3A47",
+    alignItems: "center", // Center all content
   },
   header: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
+    justifyContent: "center",
     paddingTop: 40,
     paddingBottom: 10,
     backgroundColor: "#1E3A47",
+    width: "100%",
+  },
+  logoButton: {
+    width: 300, // Ajusta el tamaño del logo
+    height: 280,
+    marginBottom: 20,
+  },
+  menuButton: {
+    position: "absolute",
+    left: 15,
+    top: 40,
+    padding: 5,
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: "100%", // El logo ocupa todo el ancho del contenedor
+    height: undefined, // Mantiene la proporción
+    aspectRatio: 1, // Mantiene la proporción original
     resizeMode: "contain",
   },
-  profileButton: {
-   
+  dropdownMenu: {
+    position: "absolute",
+    top: 80,
+    left: 15,
+    backgroundColor: "#4D92AD",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    zIndex: 10,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  menuText: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 10,
   },
   buttonsContainer: {
     flex: 1,
-    paddingHorizontal: 20,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
+    width: "100%",
+  },
+  row: {
     flexDirection: "row",
-    flexWrap: "wrap",
-   
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 15,
   },
   squareButton: {
     backgroundColor: "#4D92AD",
-    width: "30%", 
+    width: "48%",
     aspectRatio: 1,
-    borderRadius: 10,
-    margin: 10,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 10,
   },
   buttonText: {
-    marginTop: 5,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     color: "white",
-    textAlign: "center",
   },
 });
+
+export default ReportScreen;

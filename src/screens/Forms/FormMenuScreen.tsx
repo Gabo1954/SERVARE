@@ -1,26 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "FormMenu">;
 
 const FormMenuScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const [menuVisible, setMenuVisible] = useState(false);
+  
+  const toggleMenu = () => setMenuVisible(!menuVisible);
+
+  const goToProfile = () => {
+    setMenuVisible(false);
+    navigation.navigate("ProfileScreen");
+  };
 
   const goToCreateForm = () => {
-    navigation.navigate("CreateForm"); 
+    navigation.navigate("FormBuilderScreen"); 
   };
 
   const goToViewForms = () => {
     navigation.navigate("ViewForms"); 
   };
-
-  const goToProfile = () => {
-    navigation.navigate("Profile");
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("userRole");
+    setMenuVisible(false);
+    navigation.navigate("Login");
   };
+  
 
   return (
     <View style={styles.container}>
@@ -28,9 +40,18 @@ const FormMenuScreen: React.FC = () => {
       <View style={styles.header}>
       <Image source={require('../../assets/images/Logo1.png')} style={styles.logo} />
 
-        <TouchableOpacity style={styles.profileButton} onPress={goToProfile}>
-          <Ionicons name="person-circle" size={30} color="white" />
-        </TouchableOpacity>
+      {menuVisible && (
+              <View style={styles.dropdownMenu}>
+                <TouchableOpacity onPress={goToProfile} style={styles.menuItem}>
+                  <Ionicons name="person-circle" size={20} color="white" />
+                  <Text style={styles.menuText}>Perfil</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout} style={styles.menuItem}>
+                  <Ionicons name="log-out-outline" size={20} color="white" />
+                  <Text style={styles.menuText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+              </View>
+            )}
       </View>
 
      
@@ -52,6 +73,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1E3A47",
+  },
+  dropdownMenu: {
+    position: "absolute",
+    top: 80,
+    left: 15,
+    backgroundColor: "#4D92AD",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    zIndex: 10,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  menuText: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 10,
   },
   header: {
     flexDirection: "row",

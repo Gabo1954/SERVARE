@@ -41,6 +41,7 @@ import GeneralFichaReport from "../screens/Reports/Graficos/GeneralFichaReport";
 import ContactScreen from "../screens/Users/ContactScreen";
 import CreateTicketScreen from "../screens/auth/CreateTicketScreen";
 import ProfileScreen from "../screens/auth/profile";
+import EmployeesScreen from "../screens/Users/Employees";
 
 // Definimos las rutas de navegación
 export type RootStackParamList = {
@@ -153,8 +154,8 @@ const AppNavigator = () => {
 
         {/* Dashboards */}
         <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ title: "Servare" }} />
-        <Stack.Screen name="LeaderDashboard" component={LeaderDashboard} options={{ title: "Líder de Equipo" }} />
-        <Stack.Screen name="UserDashboard" component={UserDashboard} options={{ title: "Usuario" }} />
+        <Stack.Screen name="LeaderDashboard" component={LeaderDashboard} options={{ title: "Usuario" }} />
+        <Stack.Screen name="UserDashboard" component={UserDashboard} options={{ title: "Usuario General" }} />
         <Stack.Screen name="InstitutionDashboard" component={InstitutionDashboard} options={{ title: "Institución" }} />
         
 
@@ -170,6 +171,8 @@ const AppNavigator = () => {
         <Stack.Screen name="ProjectMenuScreen" component={ProjectMenuScreen} options={{ title: "Menú de Proyectos" }} />
 
         {/* Reportes */}
+        <Stack.Screen name="Employees" component={EmployeesScreen} options={{ title: "Empleados" }} />
+
         <Stack.Screen name="ReportScreen" component={ReportScreen} options={{ title: "Reportes y Estadísticas" }} />
         <Stack.Screen name="CondicionesExternasReport" component={CondicionesExternasReport} options={{ title: "Condiciones Externas" }} />
         <Stack.Screen name="MaterialesReport" component={MaterialesReport} options={{ title: "Materiales" }} />
