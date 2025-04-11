@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -7,6 +7,7 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "InstitutionDashboard">;
+const { width, height } = Dimensions.get("window");
 
 const InstitutionDashboard: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -20,7 +21,7 @@ const InstitutionDashboard: React.FC = () => {
   };
 
   const goToProjects = () => navigation.navigate("ProjectMenuScreen");
-  const goToForms = () => navigation.navigate("FormBuilderScreen");
+  const goToForms = () => navigation.navigate("FormMenu");
   const goToReports = () => navigation.navigate("ReportScreen");
   const goToEmployees = () => navigation.navigate("Employees");
   const goToContact = () => navigation.navigate("ContactScreen");
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 7,
     alignItems: "center",
+    justifyContent: "center", 
   },
   buttonText: {
     fontSize: 16,

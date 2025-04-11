@@ -40,6 +40,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  // Actualizamos el estado de isEmpresaEnabled cuando el rol cambia
+  const handleRoleChange = (itemValue: string) => {
+    setRole(itemValue);
+    // Habilitamos el campo de empresa solo si el rol es "Institución"
+    setIsEmpresaEnabled(itemValue === 'clienteInstitucion');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
@@ -47,7 +54,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
         </TouchableOpacity>
         <Text style={styles.welcomeText}>Crear cuenta</Text>
-
 
         <View style={styles.inputContainer}>
           <MaterialIcons name="email" size={24} color="white" style={styles.icon} />
@@ -60,7 +66,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             onChangeText={setEmail}
           />
         </View>
-
 
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed" size={24} color="white" style={styles.icon} />
@@ -90,12 +95,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <Ionicons name="people" size={24} color="white" style={styles.pickerIcon} />
           <Picker
             selectedValue={role}
-            onValueChange={(itemValue) => setRole(itemValue)}
+            onValueChange={handleRoleChange} // Llamamos a handleRoleChange al cambiar el rol
             style={styles.picker}
             dropdownIconColor="white"
             mode="dropdown"
           >
-            <Picker.Item label="" value="" color="" />
+            <Picker.Item label="Selecciona un rol" value="" color="black" />
             <Picker.Item label="Institución" value="clienteInstitucion" color="black" />
             <Picker.Item label="Usuario General" value="clienteUsuario" color="black" />
           </Picker>
@@ -106,14 +111,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onPress={() => {
             const newValue = !isEmpresaEnabled;
             setIsEmpresaEnabled(newValue);
-            if (!newValue) setEmpresa('');
+            if (!newValue) setEmpresa(''); 
           }}
         >
-          <MaterialIcons 
-            name={isEmpresaEnabled ? "check-box" : "check-box-outline-blank"} 
-            size={24} 
-            color="white" 
-          />
+
           <Text style={styles.checkboxLabel}>Registrar como empresa</Text>
         </TouchableOpacity>
 
@@ -126,19 +127,16 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.input}
               value={empresa}
               onChangeText={setEmpresa}
-              editable={isEmpresaEnabled}
+              editable={isEmpresaEnabled} 
             />
           </View>
         )}
-
 
         <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
           <Text style={styles.registerButtonText}>Registrarse</Text>
         </TouchableOpacity>
 
-
         <Text style={styles.loginPrompt}>¿Ya tienes una cuenta?</Text>
-
 
         <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginButtonText}>Iniciar sesión</Text>

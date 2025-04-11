@@ -6,7 +6,6 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Drawer } from 'react-native-paper';
 
-// Definir el tipo de navegación para AdminDashboard
 type AdminScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AdminDashboard'>;
 
 interface Props {
@@ -31,7 +30,6 @@ const AdminDashboard: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Menú lateral */}
       <View style={styles.sidebar}>
         <Text style={styles.sidebarTitle}>Admin Panel</Text>
         {sections.map((section) => (

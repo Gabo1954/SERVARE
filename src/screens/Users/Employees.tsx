@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, FlatList, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, Button, FlatList, Text, StyleSheet, TouchableOpacity, Alert,Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Employee {
@@ -9,7 +9,7 @@ interface Employee {
   status: string;
   startDate: string;
 }
-
+const { width, height } = Dimensions.get("window");
 const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [newEmployeeName, setNewEmployeeName] = useState('');

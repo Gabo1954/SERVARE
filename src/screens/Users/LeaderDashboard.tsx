@@ -37,7 +37,7 @@ const LeaderDashboard: React.FC = () => {
     navigation.replace("Login");
   };
 
-  const goToForms = () => navigation.navigate("FormBuilderScreen");
+  const goToForms = () => navigation.navigate("FormMenu");
   const goToReports = () => navigation.navigate("ReportScreen");
   const goToTeam = () => navigation.navigate("TeamScreen");
   const goToContact = () => navigation.navigate("ContactScreen");

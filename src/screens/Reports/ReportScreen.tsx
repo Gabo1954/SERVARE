@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image ,Dimensions} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -7,7 +7,7 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "ReportScreen">;
-
+const { width, height } = Dimensions.get("window");
 const ReportScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [menuVisible, setMenuVisible] = useState(false);

@@ -1,166 +1,150 @@
+// FormScreen.tsx
 import React, { useState, useEffect } from "react";
-import { 
-  View, Text, TextInput, Alert, FlatList, 
-  TouchableOpacity, StyleSheet, Button 
+import {
+  View, Text, FlatList, TouchableOpacity, StyleSheet, Alert,Dimensions
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { globalStyles } from "../../styles/globalStyles";
-import Slider from "@react-native-community/slider";
-import { useForm, Controller } from "react-hook-form";
-import { TextInput as PaperTextInput } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigation/AppNavigator";
 
-// Definir la interfaz de los campos
-interface FormField {
-  label: string;
-  type: string;
-  options?: string[];
+type FormScreenNavigationProp = StackNavigationProp<RootStackParamList, "FormScreen">;
+const { width, height } = Dimensions.get("window");
+interface FormData {
+  id: string;
+  title: string;
+  creationDate?: string;
+  fields?: any[];
 }
 
-const fieldTypes: string[] = [
-  "text", "email", "number", "date", 
-  "select", "checkbox", "radio", 
-  "textarea", "image", "location", "slider"
-];
-
-const FormBuilderScreen = ({ navigation }: any) => {
-  const { control, handleSubmit, formState: { errors } } = useForm();
-  const [formTitle, setFormTitle] = useState("");
-  const [fields, setFields] = useState<FormField[]>([]);
-  const [newFieldLabel, setNewFieldLabel] = useState("");
-  const [newFieldType, setNewFieldType] = useState("text");
-  const [options, setOptions] = useState("");
-  const [savedForms, setSavedForms] = useState<{ id: string; title: string }[]>([]);
+const FormScreen: React.FC = () => {
+  const [forms, setForms] = useState<FormData[]>([]);
+  const navigation = useNavigation<FormScreenNavigationProp>();
 
   useEffect(() => {
-    loadForms();
-  }, []);
+    const loadForms = async () => {
+      const keys = await AsyncStorage.getAllKeys();
+      const formKeys = keys.filter((key) => key.startsWith("form_"));
+      const formEntries = await AsyncStorage.multiGet(formKeys);
+      const loadedForms = formEntries.map(([_, value]) => value && JSON.parse(value));
+      setForms(loadedForms.filter(Boolean));
+    };
 
-  const loadForms = async () => {
-    const storedForms = await AsyncStorage.getItem("savedForms");
-    if (storedForms) {
-      setSavedForms(JSON.parse(storedForms));
-    }
+    const unsubscribe = navigation.addListener("focus", loadForms);
+    return unsubscribe;
+  }, [navigation]);
+
+  const deleteForm = (id: string) => {
+    Alert.alert("¿Eliminar formulario?", "Esta acción no se puede deshacer.", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Eliminar",
+        style: "destructive",
+        onPress: async () => {
+          const updatedForms = forms.filter((form) => form.id !== id);
+          setForms(updatedForms);
+          await AsyncStorage.removeItem(`form_${id}`);
+        },
+      },
+    ]);
   };
 
-  const addField = () => {
-    if (!newFieldLabel.trim()) {
-      Alert.alert("Error", "El campo debe tener un nombre");
-      return;
-    }
-
-    if ((newFieldType === "select" || newFieldType === "radio") && !options.trim()) {
-      Alert.alert("Error", "Debe ingresar opciones separadas por comas");
-      return;
-    }
-
-    const newField: FormField = { label: newFieldLabel, type: newFieldType };
-
-    if (newFieldType === "select" || newFieldType === "radio") {
-      newField.options = options.split(",").map((o) => o.trim());
-    }
-
-    setFields([...fields, newField]);
-    setNewFieldLabel("");
-    setNewFieldType("text");
-    setOptions("");
-  };
-
-  const removeField = (index: number) => {
-    setFields(fields.filter((_, i) => i !== index));
-  };
-
-  const saveForm = async () => {
-    if (!formTitle.trim() || fields.length === 0) {
-      Alert.alert("Error", "Debe ingresar un título y al menos un campo");
-      return;
-    }
-
-    const formId = Date.now().toString();
-    const newForm = { id: formId, title: formTitle, fields };
-
-    const storedForms = await AsyncStorage.getItem("savedForms");
-    const existingForms = storedForms ? JSON.parse(storedForms) : [];
-
-    const updatedForms = [...existingForms, { id: formId, title: formTitle }];
-    await AsyncStorage.setItem("savedForms", JSON.stringify(updatedForms));
-    await AsyncStorage.setItem(`form_${formId}`, JSON.stringify(newForm));
-
-    setSavedForms(updatedForms);
-    Alert.alert("Formulario Guardado", "Tu formulario ha sido guardado con éxito");
-
-    if (navigation && navigation.navigate) {
-      navigation.navigate("DynamicForm", { formId });
+  const editForm = async (id: string) => {
+    const formJson = await AsyncStorage.getItem(`form_${id}`);
+    if (formJson) {
+      const formToEdit = JSON.parse(formJson);
+      navigation.navigate("FormBuilderScreen", { formToEdit });
     } else {
-      Alert.alert("Error", "No se puede navegar a la vista de formulario");
+      Alert.alert("Error", "No se pudo cargar el formulario.");
     }
   };
 
   return (
-    <View style={globalStyles.container}>
-      <Text style={globalStyles.title}>Crear Nuevo Formulario</Text>
-
-      <Controller
-        control={control}
-        name="nombre"
-        rules={{ required: "El nombre es obligatorio" }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <PaperTextInput
-            label="Nombre"
-            mode="outlined"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            style={styles.input}
-          />
-        )}
-      />
-      {errors.nombre && (
-        <Text style={styles.error}>{errors.nombre?.message?.toString()}</Text>
-      )}
-
-      <TouchableOpacity style={globalStyles.button} onPress={addField}>
-        <Text style={globalStyles.buttonText}>Agregar Campo</Text>
-      </TouchableOpacity>
-
+    <View style={styles.container}>
+      <Text style={styles.title}>Mis formularios</Text>
       <FlatList
-        data={fields}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.fieldItem}>
-            <Text style={styles.fieldText}>{item.label} ({item.type})</Text>
-            <TouchableOpacity onPress={() => removeField(index)}>
-              <Text style={{ color: "red" }}>Eliminar</Text>
-            </TouchableOpacity>
+        data={forms}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.formItem}>
+            <Text style={styles.formTitle}>{item.title}</Text>
+            {item.creationDate && (
+              <Text style={styles.metaText}>Creado: {new Date(item.creationDate).toLocaleDateString()}</Text>
+            )}
+            {item.fields && (
+              <Text style={styles.metaText}>Campos: {item.fields.length}</Text>
+            )}
+            <View style={styles.actions}>
+              <TouchableOpacity onPress={() => editForm(item.id)} style={styles.editBtn}>
+                <Text style={styles.actionText}>Editar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => deleteForm(item.id)} style={styles.deleteBtn}>
+                <Text style={styles.actionText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
+        ListEmptyComponent={<Text style={styles.empty}>No hay formularios guardados.</Text>}
       />
-
-      <Button title="Guardar" onPress={handleSubmit(saveForm)} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
-    backgroundColor: "#3B4A5A",
-    padding: 12,
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#fff",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  formItem: {
+    padding: 16,
     borderRadius: 8,
-    width: "100%",
+    backgroundColor: "#f4f4f4",
+    marginBottom: 12,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  metaText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 2,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  editBtn: {
+    backgroundColor: "#1e88e5",
+    padding: 8,
+    borderRadius: 4,
+  },
+  deleteBtn: {
+    backgroundColor: "#e53935",
+    padding: 8,
+    borderRadius: 4,
+  },
+  actionText: {
     color: "#fff",
-    marginBottom: 10,
+    fontWeight: "bold",
   },
-  fieldItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  fieldText: {
-    color: "#fff",
-  },
-  error: {
-    color: "red",
-    marginBottom: 10,
+  empty: {
+    textAlign: "center",
+    marginTop: 20,
+    fontStyle: "italic",
+    color: "#999",
   },
 });
 
-export default FormBuilderScreen;
+export default FormScreen;

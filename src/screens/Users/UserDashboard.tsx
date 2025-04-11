@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image,Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 
 type NavigationProp = StackNavigationProp<RootStackParamList, "UserDashboard">;
-
+const { width, height } = Dimensions.get("window");
 const UserDashboard: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [menuVisible, setMenuVisible] = useState(false);
@@ -19,7 +19,7 @@ const UserDashboard: React.FC = () => {
     navigation.navigate("Profile");
   };
 
-  const goToForms = () => navigation.navigate("FormBuilderScreen");
+  const goToForms = () => navigation.navigate("FormMenu");
   const goToReports = () => navigation.navigate("ReportScreen");
   const goToContact = () => navigation.navigate("ContactScreen");
 
